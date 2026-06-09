@@ -52,7 +52,7 @@ async function agendarNotificacao(data: string, texto: string): Promise<string |
 
   return Notifications.scheduleNotificationAsync({
     content: {
-      title: 'ðŸ“… Lembrete de estudo amanhÃ£!',
+      title: 'Lembrete de estudo amanhã!',
       body: texto.length > 60 ? texto.substring(0, 60) + '...' : texto,
     },
     trigger: {
