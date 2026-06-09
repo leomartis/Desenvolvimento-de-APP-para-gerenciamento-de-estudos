@@ -3,7 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert, Modal, Image
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
 
-const IP = '192.168.4.222';
+const IP = '192.168.4.223';
 
 type Estudo = {
   id: number;

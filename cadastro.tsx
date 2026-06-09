@@ -32,7 +32,7 @@ export default function Cadastro({ onCadastrado, onVoltar }: Props) {
     const timeout = setTimeout(() => controller.abort(), 10000);
 
     try {
-      const response = await fetch('http://192.168.4.222/app_teste/cadastro.php', {
+      const response = await fetch('http://192.168.4.223/app_teste/cadastro.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nome, email, senha }),

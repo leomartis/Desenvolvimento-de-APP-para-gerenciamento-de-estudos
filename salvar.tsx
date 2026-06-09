@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView,
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 
-const IP = '192.168.4.222';
+const IP = '192.168.4.223';
 
 export default function Salvar() {
   const [materia, setMateria]   = useState('');

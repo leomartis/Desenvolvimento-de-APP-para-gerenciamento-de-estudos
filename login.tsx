@@ -19,7 +19,7 @@ export default function Login({ onLogin, onIrCadastro }: Props) {
 
     setCarregando(true);
     try {
-      const response = await fetch('http://192.168.4.222/app_teste/login.php', {
+      const response = await fetch('http://192.168.4.223/app_teste/login.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, senha }),

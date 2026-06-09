@@ -8,7 +8,7 @@ import { Calendar, DateData } from 'react-native-calendars';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 
-const IP = '192.168.4.222';
+const IP = '192.168.4.223';
 
 type Anotacao = { id: number; data: string; texto: string; notificar: number };
 type MarkedDates = Record<string, { marked: boolean; dotColor: string; selected?: boolean; selectedColor?: string }>;
