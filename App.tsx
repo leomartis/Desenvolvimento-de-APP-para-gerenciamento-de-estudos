@@ -12,12 +12,16 @@ type Tela = 'login' | 'cadastro' | 'listar' | 'salvar' | 'calendario';
 
 export default function App() {
   const [tela, setTela] = useState<Tela>('login');
+  const [usuarioId, setUsuarioId] = useState<number | null>(null);
 
   const renderTela = () => {
     if (tela === 'login') {
       return (
         <Login
-          onLogin={() => setTela('listar')}
+          onLogin={(id) => {
+            setUsuarioId(id);
+            setTela('listar');
+          }}
           onIrCadastro={() => setTela('cadastro')}
         />
       );
@@ -26,7 +30,7 @@ export default function App() {
     if (tela === 'cadastro') {
       return (
         <Cadastro
-          onCadastrado={() => setTela('listar')}
+          onCadastrado={() => setTela('login')}
           onVoltar={() => setTela('login')}
         />
       );
@@ -35,7 +39,13 @@ export default function App() {
     return (
       <>
         <View style={styles.content}>
-          {tela === 'salvar' ? <Salvar /> : tela === 'calendario' ? <Calendario /> : <Listar />}
+          {tela === 'salvar' ? (
+            <Salvar usuarioId={usuarioId} />
+          ) : tela === 'calendario' ? (
+            <Calendario />
+          ) : (
+            <Listar usuarioId={usuarioId} />
+          )}
         </View>
         <View style={styles.menu}>
           <TouchableOpacity
@@ -56,7 +66,7 @@ export default function App() {
           >
             <Text style={styles.textoBotao}>📅 Agenda</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.botao} onPress={() => setTela('login')}>
+          <TouchableOpacity style={styles.botao} onPress={() => { setUsuarioId(null); setTela('login'); }}>
             <Text style={styles.textoBotao}>Sair</Text>
           </TouchableOpacity>
         </View>

@@ -31,7 +31,11 @@ function formatarTempoCurto(minutos: number): string {
   return `${m}min`;
 }
 
-export default function Listar() {
+type Props = {
+  usuarioId: number | null;
+};
+
+export default function Listar({ usuarioId }: Props) {
   const [estudos, setEstudos]           = useState<Estudo[]>([]);
   const [ativoId, setAtivoId]           = useState<number | null>(null);
   const [restante, setRestante]         = useState(0);
@@ -42,8 +46,13 @@ export default function Listar() {
   const segundosPausadoRef              = useRef<Record<number, number>>({});
 
   const buscarEstudos = async () => {
+    if (!usuarioId) {
+      setEstudos([]);
+      return;
+    }
+
     try {
-      const response = await fetch(`http://${IP}/app_teste/listar.php`);
+      const response = await fetch(`http://${IP}/app_teste/listar.php?usuario_id=${usuarioId}`);
       const data = await response.json();
       setEstudos(data);
     } catch {
@@ -55,7 +64,7 @@ export default function Listar() {
     }
   };
 
-  useEffect(() => { buscarEstudos(); }, []);
+  useEffect(() => { buscarEstudos(); }, [usuarioId]);
   useEffect(() => {
     return () => { if (intervaloRef.current) clearInterval(intervaloRef.current); };
   }, []);
@@ -99,7 +108,7 @@ export default function Listar() {
       await fetch(`http://${IP}/app_teste/atualizar_tempo.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: idAtual, tempo_minutos: minutosRestantes }),
+        body: JSON.stringify({ id: idAtual, usuario_id: usuarioId, tempo_minutos: minutosRestantes }),
       });
     } catch { }
   };
@@ -130,7 +139,7 @@ export default function Listar() {
       const response = await fetch(`http://${IP}/app_teste/excluir.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids: selecionados }),
+        body: JSON.stringify({ ids: selecionados, usuario_id: usuarioId }),
       });
       const data = await response.json();
       if (data.status === 'sucesso') {

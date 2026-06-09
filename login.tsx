@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 
 type Props = {
-  onLogin: () => void;
+  onLogin: (usuarioId: number) => void;
   onIrCadastro: () => void;
 };
 
@@ -27,7 +27,7 @@ export default function Login({ onLogin, onIrCadastro }: Props) {
       const data = await response.json();
 
       if (data.status === 'sucesso') {
-        onLogin();
+        onLogin(Number(data.id));
       } else {
         Alert.alert('Erro', data.mensagem || 'E-mail ou senha incorretos.');
       }

@@ -5,7 +5,11 @@ import * as ImagePicker from 'expo-image-picker';
 
 const IP = '192.168.4.223';
 
-export default function Salvar() {
+type Props = {
+  usuarioId: number | null;
+};
+
+export default function Salvar({ usuarioId }: Props) {
   const [materia, setMateria]   = useState('');
   const [topico, setTopico]     = useState('');
   const [horas, setHoras]       = useState('');
@@ -37,6 +41,11 @@ export default function Salvar() {
   };
 
   const salvarEstudo = async () => {
+    if (!usuarioId) {
+      Alert.alert('Aviso', 'Faca login novamente para salvar o estudo.');
+      return;
+    }
+
     if (!materia || !topico) {
       Alert.alert('Aviso', 'Preencha a matéria e o tópico!');
       return;
@@ -51,6 +60,7 @@ export default function Salvar() {
       formData.append('materia', materia);
       formData.append('topico', topico);
       formData.append('tempo_minutos', String(tempo_minutos));
+      formData.append('usuario_id', String(usuarioId));
 
       if (fotoUri) {
         const nomeArquivo = fotoUri.split('/').pop() ?? 'foto.jpg';

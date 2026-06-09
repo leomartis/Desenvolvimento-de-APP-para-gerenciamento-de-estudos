@@ -50,7 +50,7 @@ export default function Cadastro({ onCadastrado, onVoltar }: Props) {
       }
 
       if (data.status === 'sucesso') {
-        Alert.alert('Sucesso', 'Conta criada com sucesso!', [
+        Alert.alert('Sucesso', 'Conta criada com sucesso! Faça login para entrar.', [
           { text: 'OK', onPress: onCadastrado },
         ]);
       } else {
