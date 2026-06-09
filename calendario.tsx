@@ -86,7 +86,7 @@ export default function Calendario() {
       setAnotacoes(mapa);
       setMarcados(marks);
     } catch {
-      // offline, sem anotaÃ§Ãµes
+      
     }
   }, []);
 
