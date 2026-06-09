@@ -141,6 +141,57 @@ export default function Calendario() {
     }
   };
 
+  const excluirAnotacao = () => {
+    if (!dataSelecionada || !anotacoes[dataSelecionada]) {
+      Alert.alert('Aviso', 'Nao existe anotacao salva nesta data.');
+      return;
+    }
+
+    Alert.alert(
+      'Excluir anotacao',
+      'Deseja excluir a anotacao desta data?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Excluir', style: 'destructive', onPress: executarExclusaoAnotacao },
+      ]
+    );
+  };
+
+  const executarExclusaoAnotacao = async () => {
+    setSalvando(true);
+    try {
+      const response = await fetch(`http://${IP}/app_teste/anotacoes_excluir.php`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: dataSelecionada }),
+      });
+      const result = await response.json();
+
+      if (result.status === 'sucesso') {
+        setTextoAtual('');
+        setNotificar(true);
+        setAnotacoes(prev => {
+          const copia = { ...prev };
+          delete copia[dataSelecionada];
+          return copia;
+        });
+        setMarcados(prev => {
+          const copia = { ...prev };
+          delete copia[dataSelecionada];
+          return copia;
+        });
+        setModalVisivel(false);
+        Alert.alert('Excluido!', 'Anotacao removida com sucesso.');
+      } else {
+        Alert.alert('Erro', result.mensagem || 'Erro ao excluir.');
+      }
+    } catch {
+      Alert.alert('Erro', 'Nao foi possivel conectar ao servidor.');
+    } finally {
+      setSalvando(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Calendário de Estudos</Text>
@@ -197,6 +248,12 @@ export default function Calendario() {
                     </View>
                   </ScrollView>
 
+                  {anotacoes[dataSelecionada] && (
+                    <TouchableOpacity style={styles.botaoExcluir} onPress={excluirAnotacao} disabled={salvando}>
+                      <Text style={styles.textoExcluir}>Excluir anotacao</Text>
+                    </TouchableOpacity>
+                  )}
+
                   <View style={styles.botoesModal}>
                     <TouchableOpacity style={styles.botaoCancelar} onPress={() => { Keyboard.dismiss(); setModalVisivel(false); }}>
                       <Text style={styles.textoCancelar}>Cancelar</Text>
@@ -226,6 +283,8 @@ const styles = StyleSheet.create({
   textarea:      { borderWidth: 2, borderColor: '#1976d2', borderRadius: 10, padding: 12, fontSize: 15, color: '#111', backgroundColor: '#f9f9f9', minHeight: 120, marginBottom: 16 },
   switchRow:     { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
   switchLabel:   { fontSize: 15, color: '#333' },
+  botaoExcluir:  { padding: 13, borderRadius: 10, backgroundColor: '#ffebee', borderWidth: 1, borderColor: '#ef9a9a', alignItems: 'center', marginBottom: 12 },
+  textoExcluir:  { color: '#c62828', fontWeight: 'bold', fontSize: 15 },
   botoesModal:   { flexDirection: 'row', gap: 12 },
   botaoCancelar: { flex: 1, padding: 14, borderRadius: 10, borderWidth: 2, borderColor: '#ccc', alignItems: 'center' },
   textoCancelar: { color: '#666', fontWeight: 'bold', fontSize: 15 },
