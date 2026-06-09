@@ -135,7 +135,7 @@ export default function Calendario() {
         Alert.alert('Erro', result.mensagem || 'Erro ao salvar.');
       }
     } catch {
-      Alert.alert('Erro', 'NÃ£o foi possÃ­vel conectar ao servidor.');
+      Alert.alert('Erro', 'Não foi possivel conectar ao servidor.');
     } finally {
       setSalvando(false);
     }
