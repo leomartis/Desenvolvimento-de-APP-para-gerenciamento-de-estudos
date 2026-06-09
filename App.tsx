@@ -57,7 +57,7 @@ export default function App() {
             <Text style={styles.textoBotao}>📅 Agenda</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.botao} onPress={() => setTela('login')}>
-            <Text style={styles.textoBotao}>🚪 Sair</Text>
+            <Text style={styles.textoBotao}>Sair</Text>
           </TouchableOpacity>
         </View>
       </>

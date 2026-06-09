@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
   Alert, Modal, ScrollView, Switch, ActivityIndicator,
@@ -25,28 +25,40 @@ Notifications.setNotificationHandler({
 
 async function pedirPermissaoNotificacao() {
   if (!Device.isDevice) return false;
+
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('estudos', {
+      name: 'Lembretes de estudo',
+      importance: Notifications.AndroidImportance.HIGH,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#1976d2',
+    });
+  }
+
   const perms = await Notifications.requestPermissionsAsync();
   return (perms as unknown as { granted: boolean }).granted === true;
 }
 
-async function agendarNotificacao(data: string, texto: string) {
+async function agendarNotificacao(data: string, texto: string): Promise<string | null> {
   const permitido = await pedirPermissaoNotificacao();
-  if (!permitido) return;
+  if (!permitido) return null;
 
   const [ano, mes, dia] = data.split('-').map(Number);
   const dataEvento = new Date(ano, mes - 1, dia, 8, 0, 0);
   const umDiaAntes = new Date(dataEvento.getTime() - 24 * 60 * 60 * 1000);
+  const agora = new Date();
+  const dezSegundosDepois = new Date(agora.getTime() + 10 * 1000);
+  const dataNotificacao = umDiaAntes > agora ? umDiaAntes : dezSegundosDepois;
 
-  if (umDiaAntes <= new Date()) return;
-
-  await Notifications.scheduleNotificationAsync({
+  return Notifications.scheduleNotificationAsync({
     content: {
-      title: '📅 Lembrete de estudo amanhã!',
+      title: 'ðŸ“… Lembrete de estudo amanhÃ£!',
       body: texto.length > 60 ? texto.substring(0, 60) + '...' : texto,
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DATE,
-      date: umDiaAntes,
+      date: dataNotificacao,
+      channelId: 'estudos',
     },
   });
 }
@@ -74,7 +86,7 @@ export default function Calendario() {
       setAnotacoes(mapa);
       setMarcados(marks);
     } catch {
-      // offline, sem anotações
+      // offline, sem anotaÃ§Ãµes
     }
   }, []);
 
@@ -110,15 +122,20 @@ export default function Calendario() {
       const result = await response.json();
 
       if (result.status === 'sucesso') {
-        if (notificar) await agendarNotificacao(dataSelecionada, textoAtual);
+        const notificacaoId = notificar ? await agendarNotificacao(dataSelecionada, textoAtual) : null;
         await carregarAnotacoes();
         setModalVisivel(false);
-        Alert.alert('Salvo!', notificar ? 'Anotação salva. Você receberá um lembrete 1 dia antes.' : 'Anotação salva.');
+        Alert.alert(
+          'Salvo!',
+          notificar && notificacaoId
+            ? 'Anotação salva e notificação agendada.'
+            : 'Anotação salva.'
+        );
       } else {
         Alert.alert('Erro', result.mensagem || 'Erro ao salvar.');
       }
     } catch {
-      Alert.alert('Erro', 'Não foi possível conectar ao servidor.');
+      Alert.alert('Erro', 'NÃ£o foi possÃ­vel conectar ao servidor.');
     } finally {
       setSalvando(false);
     }
@@ -154,13 +171,13 @@ export default function Calendario() {
             <View style={styles.modalFundo}>
               <TouchableWithoutFeedback onPress={() => {}}>
                 <View style={styles.modalBox}>
-                  <Text style={styles.modalTitulo}>📅 {dataSelecionada}</Text>
+                  <Text style={styles.modalTitulo}> {dataSelecionada}</Text>
 
                   <ScrollView keyboardShouldPersistTaps="handled">
-                    <Text style={styles.label}>Anotação</Text>
+                    <Text style={styles.label}>Anotacão</Text>
                     <TextInput
                       style={styles.textarea}
-                      placeholder="Ex: Revisar capítulo 3 de Programação Mobile..."
+                      placeholder="Ex: Revisar capi­tulo 3 de Programação Mobile..."
                       placeholderTextColor="#aaa"
                       value={textoAtual}
                       onChangeText={setTextoAtual}
